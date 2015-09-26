@@ -17,18 +17,21 @@ namespace CoursesAPI.Tests.Services
 		private CoursesServiceProvider _service;
 		private List<TeacherRegistration> _teacherRegistrations;
 
-		private const string SSN_DABS    = "1203735289";
+        private const string SSN_DABS    = "1203735289";
 		private const string SSN_GUNNA   = "1234567890";
-		private const string INVALID_SSN = "9876543210";
+        private const string SSN_MARCEL  = "1234567891";
+        private const string INVALID_SSN = "9876543210";
 
 		private const string NAME_GUNNA  = "Guðrún Guðmundsdóttir";
+	    private const string NAME_MARCEL = "Marcel Kyas";
 
 		private const int COURSEID_VEFT_20153 = 1337;
 		private const int COURSEID_VEFT_20163 = 1338;
-		private const int INVALID_COURSEID    = 9999;
+        private const int COURSEID_TSAM_20153 = 1339;
+        private const int INVALID_COURSEID    = 9999;
 
-		[TestInitialize]
-		public void Setup()
+        [TestInitialize]
+        public void Setup()
 		{
 			_mockUnitOfWork = new MockUnitOfWork<MockDataContext>();
 
@@ -50,8 +53,15 @@ namespace CoursesAPI.Tests.Services
 					Name  = NAME_GUNNA,
 					SSN   = SSN_GUNNA,
 					Email = "gunna@ru.is"
-				}
-			};
+				},
+                new Person
+                {
+                    ID    = 3,
+                    Name  = NAME_MARCEL,
+                    SSN   = SSN_MARCEL,
+                    Email = "marcel@ru.is"
+                }
+            };
 			#endregion
 
 			#region Course templates
@@ -63,8 +73,14 @@ namespace CoursesAPI.Tests.Services
 					CourseID    = "T-514-VEFT",
 					Description = "Í þessum áfanga verður fjallað um vefþj...",
 					Name        = "Vefþjónustur"
-				}
-			};
+				},
+                new CourseTemplate
+                {
+                    CourseID    = "T-409-TSAM",
+                    Description = "Í þessum áfanga verður fjallað um samskipti...",
+                    Name        = "Tölvusamskipti"
+                }
+            };
 			#endregion
 
 			#region Courses
@@ -81,8 +97,14 @@ namespace CoursesAPI.Tests.Services
 					ID         = COURSEID_VEFT_20163,
 					CourseID   = "T-514-VEFT",
 					SemesterID = "20163"
-				}
-			};
+				},
+                new CourseInstance
+                {
+                    ID         = COURSEID_TSAM_20153,
+                    CourseID   = "T-409-TSAM",
+                    SemesterID = "20153"
+                }
+            };
 			#endregion
 
 			#region Teacher registrations
@@ -94,8 +116,15 @@ namespace CoursesAPI.Tests.Services
 					CourseInstanceID = COURSEID_VEFT_20153,
 					SSN              = SSN_DABS,
 					Type             = TeacherType.MainTeacher
-				}
-			};
+				},
+                new TeacherRegistration
+                {
+                    ID               = 102,
+                    CourseInstanceID = COURSEID_TSAM_20153,
+                    SSN              = SSN_MARCEL,
+                    Type             = TeacherType.MainTeacher
+                }
+            };
 			#endregion
 
 			_mockUnitOfWork.SetRepositoryData(persons);
@@ -111,29 +140,122 @@ namespace CoursesAPI.Tests.Services
 
 		#region GetCoursesBySemester
 		/// <summary>
-		/// TODO: implement this test, and several others!
+		/// The function should return an empty list if no 
+		/// courses are defined for the semester
 		/// </summary>
 		[TestMethod]
 		public void GetCoursesBySemester_ReturnsEmptyListWhenNoDataDefined()
 		{
 			// Arrange:
+		    string semester = "20173";
 
-			// Act:
+		    // Act:
+		    var result = _service.GetCourseInstancesBySemester(semester);
 
-			// Assert:
+		    // Assert:
+            Assert.AreEqual(0, result.Count);
 		}
 
-		// TODO!!! you should write more unit tests here!!!
-
-		#endregion
-
-		#region AddTeacher
-
-		/// <summary>
-		/// Adds a main teacher to a course which doesn't have a
-		/// main teacher defined already (see test data defined above).
+        /// <summary>
+		/// The function should return all courses on a given semester
+		/// (no more, no less).
 		/// </summary>
 		[TestMethod]
+        public void GetCoursesBySemester_ReturnsAllCoursesOnAGivenSemester()
+        {
+            // Arrange:
+
+            // Act:
+            var result = _service.GetCourseInstancesBySemester("20153");
+            var result2 = _service.GetCourseInstancesBySemester("20163");
+
+            // Assert:
+            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(1, result2.Count);
+        }
+
+        /// <summary>
+        /// The function should return courses tought on
+        /// the semester 20153 if no semester is given.
+        /// </summary>
+        [TestMethod]
+        public void GetCoursesBySemester_ReturnsCoursesForCurrentSemesterIfNoSemester()
+        {
+            // Arrange:
+
+            // Act:
+            var result = _service.GetCourseInstancesBySemester();
+
+            // Assert:
+            Assert.AreEqual(2, result.Count);
+        }
+
+        /// <summary>
+        /// For each course returned, the name of the main teacher
+        /// of the course should be included. (see CourseInstanceDTO definition)
+        /// </summary>
+        [TestMethod]
+        public void GetCoursesBySemester_ForEachCourseReturnedMainTeacherNameIsIncluded()
+        {
+            // Arrange:
+
+            // Act:
+            var result = _service.GetCourseInstancesBySemester();
+
+            // Assert:
+            foreach (var ci in result)
+            {
+                Assert.AreNotEqual(null, ci.MainTeacher);
+            }
+        }
+
+        /// <summary>
+        /// If the main teacher hasn't been defined, the name of the main
+        /// teacher should be returned as an empty string.
+        /// </summary>
+        [TestMethod]
+        public void GetCoursesBySemester_MainTeacherNameIsEmptyStringIfNoMainTeacherDefined()
+        {
+            // Arrange:
+            
+
+            // Act:
+            var result = _service.GetCourseInstancesBySemester();
+
+            // Assert:
+            foreach (var ci in result)
+            {
+                 
+            }
+            Assert.Equals(0, 1);
+        }
+
+
+
+        /// <summary>
+        /// If the main teacher has been defined, the name of the main
+        /// teacher should be returned.
+        /// </summary>
+        [TestMethod]
+        public void GetCoursesBySemester_ReturnNameOfMainTeacherWhenItIsDefined()
+        {
+            // Arrange:
+
+            // Act:
+
+            // Assert:
+            Assert.AreEqual(0, 1);
+        }
+
+        #endregion
+
+        #region AddTeacher
+
+        /// <summary>
+        /// Adds a main teacher to a course which doesn't have a
+        /// main teacher defined already (see test data defined above).
+        /// </summary>
+        [TestMethod]
 		public void AddTeacher_WithValidTeacherAndCourse()
 		{
 			// Arrange:
