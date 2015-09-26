@@ -34,7 +34,27 @@ namespace CoursesAPI.Services.Services
 		/// <returns>Should return basic information about the person.</returns>
 		public PersonDTO AddTeacherToCourse(int courseInstanceID, AddTeacherViewModel model)
 		{
-			// TODO: implement this logic!
+			// Check if courseID is correct
+		    var courseInstance = (from c in _courseInstances.All()
+		        where c.ID == courseInstanceID
+		        select c).SingleOrDefault();
+		    if (courseInstance == null)
+		    {
+		        throw new AppObjectNotFoundException();
+		    }
+
+            // Check if teacher SSN is in the system
+		    var teacherExists = (from p in _persons.All()
+		        where p.SSN == model.SSN
+		        select p).SingleOrDefault();
+
+		    if (teacherExists == null)
+		    {
+		        throw new AppObjectNotFoundException();
+		    }
+
+            //TODO: Finish rest of logic
+
 			return null;
 		}
 
