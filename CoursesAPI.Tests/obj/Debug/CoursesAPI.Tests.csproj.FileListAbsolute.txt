@@ -1,0 +1,13 @@
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Tests\bin\Debug\CoursesAPI.Tests.dll
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Tests\bin\Debug\CoursesAPI.Tests.pdb
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Tests\bin\Debug\CoursesAPI.Models.dll
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Tests\bin\Debug\CoursesAPI.Services.dll
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Tests\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Tests\bin\Debug\EntityFramework.dll
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Tests\bin\Debug\CoursesAPI.Models.pdb
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Tests\bin\Debug\CoursesAPI.Services.pdb
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Tests\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.xml
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Tests\bin\Debug\EntityFramework.xml
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Tests\obj\Debug\CoursesAPI.Tests.csprojResolveAssemblyReference.cache
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Tests\obj\Debug\CoursesAPI.Tests.dll
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Tests\obj\Debug\CoursesAPI.Tests.pdb

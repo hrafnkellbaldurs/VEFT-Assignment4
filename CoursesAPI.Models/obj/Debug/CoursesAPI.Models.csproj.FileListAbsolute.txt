@@ -1,0 +1,5 @@
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Models\bin\Debug\CoursesAPI.Models.dll
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Models\bin\Debug\CoursesAPI.Models.pdb
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Models\obj\Debug\CoursesAPI.Models.csprojResolveAssemblyReference.cache
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Models\obj\Debug\CoursesAPI.Models.dll
+C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\CoursesAPI.Models\obj\Debug\CoursesAPI.Models.pdb
