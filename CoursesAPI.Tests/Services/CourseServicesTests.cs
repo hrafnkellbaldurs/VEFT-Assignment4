@@ -22,7 +22,8 @@ namespace CoursesAPI.Tests.Services
         private const string SSN_MARCEL  = "1234567891";
         private const string INVALID_SSN = "9876543210";
 
-		private const string NAME_GUNNA  = "Guðrún Guðmundsdóttir";
+	    private const string NAME_DABS = "Daníel B. Sigurgeirsson";
+        private const string NAME_GUNNA  = "Guðrún Guðmundsdóttir";
 	    private const string NAME_MARCEL = "Marcel Kyas";
 
 		private const int COURSEID_VEFT_20153 = 1337;
@@ -43,7 +44,7 @@ namespace CoursesAPI.Tests.Services
 				new Person
 				{
 					ID    = 1,
-					Name  = "Daníel B. Sigurgeirsson",
+					Name  = NAME_DABS,
 					SSN   = SSN_DABS,
 					Email = "dabs@ru.is"
 				},
@@ -116,14 +117,7 @@ namespace CoursesAPI.Tests.Services
 					CourseInstanceID = COURSEID_VEFT_20153,
 					SSN              = SSN_DABS,
 					Type             = TeacherType.MainTeacher
-				},
-                new TeacherRegistration
-                {
-                    ID               = 102,
-                    CourseInstanceID = COURSEID_TSAM_20153,
-                    SSN              = SSN_MARCEL,
-                    Type             = TeacherType.MainTeacher
-                }
+				}
             };
 			#endregion
 
@@ -131,9 +125,6 @@ namespace CoursesAPI.Tests.Services
 			_mockUnitOfWork.SetRepositoryData(courseTemplates);
 			_mockUnitOfWork.SetRepositoryData(courses);
 			_mockUnitOfWork.SetRepositoryData(_teacherRegistrations);
-
-			// TODO: this would be the correct place to add 
-			// more mock data to the mockUnitOfWork!
 
 			_service = new CoursesServiceProvider(_mockUnitOfWork);
 		}
@@ -147,13 +138,12 @@ namespace CoursesAPI.Tests.Services
 		public void GetCoursesBySemester_ReturnsEmptyListWhenNoDataDefined()
 		{
 			// Arrange:
-		    string semester = "20173";
-
 		    // Act:
-		    var result = _service.GetCourseInstancesBySemester(semester);
+		    var DTOList = _service.GetCourseInstancesBySemester("20173");
+            // Note: the method uses test data defined in [TestInitialize]
 
-		    // Assert:
-            Assert.AreEqual(0, result.Count);
+            // Assert:
+            Assert.AreEqual(0, DTOList.Count);
 		}
 
         /// <summary>
@@ -164,14 +154,21 @@ namespace CoursesAPI.Tests.Services
         public void GetCoursesBySemester_ReturnsAllCoursesOnAGivenSemester()
         {
             // Arrange:
-
             // Act:
-            var result = _service.GetCourseInstancesBySemester("20153");
-            var result2 = _service.GetCourseInstancesBySemester("20163");
+            var DTOList1 = _service.GetCourseInstancesBySemester("20153");
+            var DTOList2 = _service.GetCourseInstancesBySemester("20163");
 
             // Assert:
-            Assert.AreEqual(2, result.Count);
-            Assert.AreEqual(1, result2.Count);
+            Assert.AreEqual(2, DTOList1.Count);
+            Assert.AreEqual(1, DTOList2.Count);
+
+            // Testing if data is being set up right
+            var veft20163DTO = DTOList2[0];
+            Assert.AreEqual(COURSEID_VEFT_20163, veft20163DTO.CourseInstanceID);
+            Assert.AreEqual("Vefþjónustur", veft20163DTO.Name );
+            Assert.AreEqual("T-514-VEFT", veft20163DTO.TemplateID);
+            Assert.AreEqual("", veft20163DTO.MainTeacher);
+            // Note: the method uses test data defined in [TestInitialize]
         }
 
         /// <summary>
@@ -182,31 +179,31 @@ namespace CoursesAPI.Tests.Services
         public void GetCoursesBySemester_ReturnsCoursesForCurrentSemesterIfNoSemester()
         {
             // Arrange:
-
             // Act:
-            var result = _service.GetCourseInstancesBySemester();
+            var DTOList = _service.GetCourseInstancesBySemester();
 
             // Assert:
-            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(2, DTOList.Count);
+            // Note: the method uses test data defined in [TestInitialize]
         }
 
         /// <summary>
         /// For each course returned, the name of the main teacher
-        /// of the course should be included. (see CourseInstanceDTO definition)
+        /// of the course should be included.
         /// </summary>
         [TestMethod]
         public void GetCoursesBySemester_ForEachCourseReturnedMainTeacherNameIsIncluded()
         {
             // Arrange:
-
             // Act:
-            var result = _service.GetCourseInstancesBySemester();
+            var DTOList = _service.GetCourseInstancesBySemester("20153");
 
             // Assert:
-            foreach (var ci in result)
+            foreach (var ciDTO in DTOList)
             {
-                Assert.AreNotEqual(null, ci.MainTeacher);
+                Assert.AreNotEqual(null, ciDTO.MainTeacher);
             }
+            // Note: the method uses test data defined in [TestInitialize]
         }
 
         /// <summary>
@@ -217,17 +214,18 @@ namespace CoursesAPI.Tests.Services
         public void GetCoursesBySemester_MainTeacherNameIsEmptyStringIfNoMainTeacherDefined()
         {
             // Arrange:
-            
-
             // Act:
-            var result = _service.GetCourseInstancesBySemester();
+            var DTOList = _service.GetCourseInstancesBySemester("20153");
 
             // Assert:
-            foreach (var ci in result)
+            foreach (var ciDTO in DTOList)
             {
-                 
+                if (ciDTO.CourseInstanceID == COURSEID_TSAM_20153)
+                {
+                    Assert.AreEqual("", ciDTO.MainTeacher);
+                }
             }
-            Assert.Equals(0, 1);
+            // Note: the method uses test data defined in [TestInitialize]
         }
 
 
@@ -240,11 +238,18 @@ namespace CoursesAPI.Tests.Services
         public void GetCoursesBySemester_ReturnNameOfMainTeacherWhenItIsDefined()
         {
             // Arrange:
-
             // Act:
+            var DTOList = _service.GetCourseInstancesBySemester("20153");
 
             // Assert:
-            Assert.AreEqual(0, 1);
+            foreach (var ciDTO in DTOList)
+            {
+                if (ciDTO.CourseInstanceID == COURSEID_VEFT_20153)
+                {
+                    Assert.AreEqual(NAME_DABS, ciDTO.MainTeacher);
+                }
+            }
+            // Note: the method uses test data defined in [TestInitialize]
         }
 
         #endregion

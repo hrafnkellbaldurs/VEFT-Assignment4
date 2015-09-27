@@ -19,6 +19,5 @@ C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\VEFT-
 C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\VEFT-Assignment4\CoursesAPI.Services\bin\Debug\CoursesAPI.Models.pdb
 C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\VEFT-Assignment4\CoursesAPI.Services\bin\Debug\EntityFramework.xml
 C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\VEFT-Assignment4\CoursesAPI.Services\bin\Debug\EntityFramework.SqlServer.xml
-C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\VEFT-Assignment4\CoursesAPI.Services\obj\Debug\CoursesAPI.Services.csprojResolveAssemblyReference.cache
 C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\VEFT-Assignment4\CoursesAPI.Services\obj\Debug\CoursesAPI.Services.dll
 C:\Users\Hrafnkell\Dropbox\HR\2015\Haust\VEFT\Verkefni\Assignment 4\Week05\VEFT-Assignment4\CoursesAPI.Services\obj\Debug\CoursesAPI.Services.pdb

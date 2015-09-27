@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
+using System.Security.AccessControl;
 using CoursesAPI.Models;
 using CoursesAPI.Services.DataAccess;
 using CoursesAPI.Services.Exceptions;
@@ -38,50 +40,108 @@ namespace CoursesAPI.Services.Services
 		    var courseInstance = (from c in _courseInstances.All()
 		        where c.ID == courseInstanceID
 		        select c).SingleOrDefault();
-		    if (courseInstance == null)
-		    {
+
+		    if (courseInstance == null){
 		        throw new AppObjectNotFoundException();
 		    }
 
             // Check if teacher SSN is in the system
-		    var teacherExists = (from p in _persons.All()
+		    var teacher = (from p in _persons.All()
 		        where p.SSN == model.SSN
 		        select p).SingleOrDefault();
 
-		    if (teacherExists == null)
-		    {
+		    if (teacher == null){
 		        throw new AppObjectNotFoundException();
 		    }
 
-            //TODO: Finish rest of logic
+            // Get the list of teachers assigned for this course
+            var teachersForCourse = (from tr in _teacherRegistrations.All()
+                                     where tr.CourseInstanceID == courseInstanceID
+                                     select tr).ToList();
 
-			return null;
+		    // If the teacher being registered is a main teacher
+            // and the course already has a main teacher registered;
+            // throw an exception
+            if (model.Type == TeacherType.MainTeacher && 
+                teachersForCourse.Any(t => t.Type == TeacherType.MainTeacher))
+            {
+                throw new AppValidationException("COURSE_ALREADY_HAS_A_MAIN_TEACHER");
+            }
+
+            // If the teacher being registered is already registered as a
+            // teacher in the course; throw an exception
+		    if (teachersForCourse.Any(t => t.SSN == model.SSN))
+		    {
+		        throw new AppValidationException("PERSON_ALREADY_REGISTERED_TEACHER_IN_COURSE");
+		    }
+
+            // If all seems to be OK, register the teacher to the course
+		    var teacherRegistration = new TeacherRegistration
+		    {
+                SSN = model.SSN,
+                CourseInstanceID = courseInstanceID,
+                Type = model.Type
+		    };
+
+            _teacherRegistrations.Add(teacherRegistration);
+            _uow.Save();
+
+            // Display the teacher that was added to the course
+		    var personDTO = new PersonDTO
+		    {
+                Name = teacher.Name,
+                SSN = teacher.SSN
+		    };
+
+			return personDTO;
 		}
 
 		/// <summary>
-		/// You should write tests for this function. You will also need to
-		/// modify it, such that it will correctly return the name of the main
-		/// teacher of each course.
+		/// Finds CourseInstances taught on the given semester.
+		/// If no semester is given, the current semester "20153" is used instead.
 		/// </summary>
-		/// <param name="semester"></param>
-		/// <returns></returns>
+		/// <param name="semester">The semester to get courses from</param>
+		/// <returns>A List of CourseInstanceDTOs taught on the given semester</returns>
 		public List<CourseInstanceDTO> GetCourseInstancesBySemester(string semester = null)
 		{
+            // Assign a default semester if no semester is given
 			if (string.IsNullOrEmpty(semester))
 			{
 				semester = "20153";
 			}
 
+            // Construct the list of courses tought in the given semester
 			var courses = (from c in _courseInstances.All()
-				join ct in _courseTemplates.All() on c.CourseID equals ct.CourseID
-				where c.SemesterID == semester
-				select new CourseInstanceDTO
-				{
-					Name               = ct.Name,
-					TemplateID         = ct.CourseID,
-					CourseInstanceID   = c.ID,
-					MainTeacher        = "" // Hint: it should not always return an empty string!
-				}).ToList();
+				           join ct in _courseTemplates.All() on c.CourseID equals ct.CourseID
+				           where c.SemesterID == semester
+				           select new CourseInstanceDTO
+				           {
+					           Name               = ct.Name,
+					           TemplateID         = ct.CourseID,
+					           CourseInstanceID   = c.ID,
+					           MainTeacher        = ""
+				           }).ToList();
+
+            // Find main teacher name
+		    foreach (var ciDTO in courses)
+		    {
+		        var mainTeacherRegistration = (from tr in _teacherRegistrations.All()
+		            where tr.CourseInstanceID == ciDTO.CourseInstanceID
+		            where tr.Type == TeacherType.MainTeacher
+		            select tr).SingleOrDefault();
+
+		        if (mainTeacherRegistration != null)
+		        {
+		            var mainTeacher = (from p in _persons.All()
+                                       where p.SSN == mainTeacherRegistration.SSN
+                                       select p).SingleOrDefault();
+
+                    if (mainTeacher != null)
+                    {
+                        ciDTO.MainTeacher = mainTeacher.Name;
+                    }
+		        } 
+		    }
 
 			return courses;
 		}
